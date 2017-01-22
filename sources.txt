@@ -1,4 +1,4 @@
-- [X] http://www.usnpl.com
+- [x] http://www.usnpl.com
 - [ ] https://en.wikipedia.org/wiki/List_of_newspapers_in_the_United_States
 - [ ] http://www.onlinenewspapers.com/usstate/
 - [ ] http://www.50states.com/news/
