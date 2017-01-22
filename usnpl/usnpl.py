@@ -1,23 +1,22 @@
 '''usnpl.py'''
-#######################################
-#Libraries
-#######################################
+################################################
+#LIBRARIES
+################################################
 from bs4 import BeautifulSoup
 import requests
 from lxml import html
 import csv
 import time
 
-#######################################
-#Load page
-#######################################
+################################################
+#LOAD PAGE
+################################################
 res0     = requests.get('http://www.usnpl.com/aknews.php')
-homepage = res0.content
-soup0 = BeautifulSoup(homepage,'lxml')
+soup0    = BeautifulSoup(res0.content,'lxml')
 
-#######################################
-#Return list of states
-#######################################
+################################################
+#RETURN LIST OF STATES
+################################################
 states      = []
 state_links = []
 statesstr0  = str(soup0.select('td'))
@@ -26,10 +25,9 @@ for i in section0.select('a'):
 	state_links.append((i['href']))
 	states.append(i.next)
 
-
-#######################################
+################################################
 #SINGLE FILE 'all.csv'
-#######################################
+################################################
 state = []
 city  = []
 names = []
@@ -47,15 +45,18 @@ for k in range(len(state_links)-1):
 			state.append(states[k])
 	print(state_links[k])
 	time.sleep(5)
+
+################################################
+#WRITE CSV FILE FROM STATE,CITY,NAMES,URL ARRAYS
+################################################	
 with open ('all.csv','w') as csvfile:
 	writer_0 = csv.writer(csvfile,delimiter=',')
 	for i in range(len(city)):
 		writer_0.writerow([state[i].upper(),city[i],names[i],URL[i]])
 
-
-#######################################
+################################################
 #SEPARATE FILES '/by_state/state.csv'
-#######################################
+################################################
 # for k in range(len(state_links)-1):
 # 	res1       = requests.get(state_links[k])
 # 	soup       = BeautifulSoup(res1.content,'lxml')
@@ -76,5 +77,3 @@ with open ('all.csv','w') as csvfile:
 # 					writer_0.writerow([current_state.upper(),city[i],name[i],URL[i]])
 # 	print(state_links[k])
 # 	time.sleep(5)
-
-
