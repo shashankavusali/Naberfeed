@@ -1,5 +1,5 @@
 # links
-A variety of scrips to crawl and retrieve a collection of single local newspaper URLs
+A variety of scripts to scrape and retrieve a collection of US local newspaper URLs
 
 ### Folders (usnpl, paperboy, etc...)
 Each folder contains scripts and output files for each site listed in sources.md.
