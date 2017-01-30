@@ -1,31 +1,37 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup,element
 import urllib.request
 import re
+
 
 baseurl ='http://www.50states.com'
 page = urllib.request.urlopen(baseurl+'/news')
 
-# html_doc = """
-# <html><head><title>The Dormouse's story</title></head>
-# <body>
-# <p class="title"><b>The Dormouse's story</b></p>
-
-# <p class="story">Once upon a time there were three little sisters; and their names were
-# <a href="http://example.com/elsie" class="sister" id="link1">Elsie</a>,
-# <a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
-# <a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
-# and they lived at the bottom of a well.</p>
-
-# <p class="story">...</p>
-# """
-
-soup = BeautifulSoup(page,'html.parser')
+soup = BeautifulSoup(page,'lxml')
 # print(soup.prettify())
 
-for ul in soup.find_all('ul',class_='listStates'):
-	for ul2 in ul.find_all('ul'):
-		for atag in ul2.find_all('a'):
-			print(baseurl+atag['href'])
-			childpage = urllib.request.urlopen(baseurl+atag['href'])
-			childsoup =  BeautifulSoup(childpage,'html.parser')
-			print(childsoup.find_all('a'))
+file = open('50states.csv','w')
+
+for statelist in soup.find_all('ul',class_='listStates'):
+	for column in statelist.find_all('ul'):
+		for state in column.find_all('a'):
+			state_name = state.get_text()
+			print(state_name)
+			childpage = urllib.request.urlopen(baseurl+state['href'])
+			childsoup =  BeautifulSoup(childpage,'lxml')
+			# print(childsoup.prettify())
+			citylist = childsoup.find_all(re.compile("ul"),id='newsList')[0]
+			for news_link in  citylist.select('li a'):
+				try:
+					url = news_link['href']
+					city_name = news_link.next_sibling
+					if city_name !=None and city_name != '' and not isinstance(city_name,element.Tag) :
+						try:
+							city_name = city_name.strip().replace('[','').replace(']','')
+							file.write(state_name + ',' + url+','+city_name+'\n')
+						except Exception:
+							print('exception occured for :' + url)
+							continue
+				except Exception:
+					print(news_link)
+
+file.close()
