@@ -1,0 +1,6 @@
+- [x] http://www.usnpl.com
+- [ ] https://en.wikipedia.org/wiki/List_of_newspapers_in_the_United_States
+- [ ] http://www.onlinenewspapers.com/usstate/
+- [x] http://www.50states.com/news/
+- [ ] http://www.thepaperboy.com/united%2Dstates/newspapers/country.cfm
+- [ ] http://www.hometownnews.com
