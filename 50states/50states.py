@@ -46,7 +46,7 @@ def scrape_list(state_name,iterable):
 				try:
 					city_name = city_name.strip().replace('[','').replace(']','')
 					file.write(state_acronyms[states_full.index(state_name)] +
-						',' + url +',' + name + ','+ city_name + '\n')
+						',' + city_name + ','+ name + ',' + url + '\n')
 				except Exception:
 					print('exception occured for :' + url)
 					continue
