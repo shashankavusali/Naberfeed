@@ -31,26 +31,28 @@ output = open('output.json','w')
 fziphandler   = open(zips_file,'r')
 
 reader = csv.reader(fziphandler)
+next(reader)
 for row in reader:
-    state_name  = row[3]
-    city_name   = row[2]
-    county_name = row[4]
-    zip_nr      = row[0]
-    population  = row[7]
-    latitude    = row[5]
-    longitude   = row[6]
-    state       = states_zips[state_name]
-    if city_name in state:
-        city = state[city_name]
-    else:
-        city = {}
-        state[city_name] = city
-    this_zip = {}
-    this_zip['county_name'] = county_name
-    this_zip['population'] = population
-    this_zip['coords'] = (latitude,longitude)
-    city[zip_nr] = this_zip
+	state_name  = row[3]
+	city_name   = row[2]
+	county_name = row[4]
+	zip_nr      = row[0]
+	population  = row[7]
+	latitude    = row[5]
+	longitude   = row[6]
+	state = states_zips[state_name]
+	if city_name in state:
+		city = state[city_name]
+	else:
+		city = {}
+		state[city_name] = city
+	this_zip = {}
+	this_zip['county_name'] = county_name
+	this_zip['population'] = population
+	this_zip['coords'] = (latitude,longitude)
+	city[zip_nr] = this_zip
 
+fziphandler.close();
 
 for f in files:
     fhandler = open(f,'r')
@@ -61,21 +63,20 @@ for f in files:
         paper_name = row[2].strip()
         paper_url = row[3].strip()
         state = states_dict[state_name]
+        zips_state = states_zips[state_name]
         if city_name in state:
             city = state[city_name]
         else:
             city = {}
             state[city_name] = city
+            zips_city = zips_state[city_name]
+            city['zips'] = zips_city
         if paper_name in city:
             paper = city[paper_name]
             paper.append(paper_url)
         else:
             city[paper_name] = [paper_url]
-    fhandler.close()
 
-print('End of program')
-
-
-#CLOSE FILES
-zips.close()
+fhandler.close()
 output.close()
+print('End of program')
