@@ -1,6 +1,7 @@
 '''table_merge.py'''
 #LIBRARIES
 import csv
+import json
 
 #NEWSPAPERS CSV FILES
 fiftystates_file  = '50states/50states_2.csv'
@@ -49,7 +50,7 @@ for row in reader:
 	this_zip = {}
 	this_zip['county_name'] = county_name
 	this_zip['population'] = population
-	this_zip['coords'] = (latitude,longitude)
+	this_zip['coords'] = (float(latitude),float(longitude))
 	city[zip_nr] = this_zip
 fziphandler.close();
 
@@ -68,8 +69,6 @@ for f in files:
         else:
             city = {}
             state[city_name] = city
-            print(state_name)
-            print(city_name)
             if city_name in zips_state:
                 zips_city = zips_state[city_name]
                 city['zips'] = zips_city
@@ -78,6 +77,9 @@ for f in files:
             paper.append(paper_url)
         else:
             city[paper_name] = [paper_url]
+
+
 fhandler.close()
+json.dump(states_dict,output)
 output.close()
 print('End of program')
