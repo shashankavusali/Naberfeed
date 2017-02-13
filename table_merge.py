@@ -51,7 +51,6 @@ for row in reader:
 	this_zip['population'] = population
 	this_zip['coords'] = (latitude,longitude)
 	city[zip_nr] = this_zip
-
 fziphandler.close();
 
 for f in files:
@@ -69,14 +68,16 @@ for f in files:
         else:
             city = {}
             state[city_name] = city
-            zips_city = zips_state[city_name]
-            city['zips'] = zips_city
+            print(state_name)
+            print(city_name)
+            if city_name in zips_state:
+                zips_city = zips_state[city_name]
+                city['zips'] = zips_city
         if paper_name in city:
             paper = city[paper_name]
             paper.append(paper_url)
         else:
             city[paper_name] = [paper_url]
-
 fhandler.close()
 output.close()
 print('End of program')
