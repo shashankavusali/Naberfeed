@@ -68,8 +68,8 @@ def store_articles(paper_name,source,location):
 if __name__ == '__main__':
 	with open('output.json') as file:
 		data = json.load(file)
-	#  Parallel(n_jobs=4)(delayed(scrape_state)(key,val) for (key,val) in data.items())
-	for key,val in data.items():
-		scrape_state(key,val)
-		break
+	Parallel(n_jobs=4)(delayed(scrape_state)(key,val) for (key,val) in data.items())
+	# for key,val in data.items():
+	# 	scrape_state(key,val)
+	# 	break
 	print('Done scraping')
