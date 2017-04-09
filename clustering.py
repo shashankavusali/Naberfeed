@@ -21,7 +21,7 @@ class Clustering(object):
         return c[:,idx]
 
     def get_clusters_at(self, height):
-        self.cluster()
+        self.Z = linkage(self.dists,method='complete')
         return cut_tree(self.Z, height = height)
 
     def cluster(self):

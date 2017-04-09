@@ -13,41 +13,22 @@ ZIPS = 'zips'
 with open('article_template.json') as file:
 	article_template = json.load(file)
 
-def scrape_state(state_name, cities):
-	for city,city_papers in cities.items():
-		papers = []
-		sources = []
-		zips = {}
-		if ZIPS in city_papers.keys():
-			zips = city_papers[ZIPS]
-		location = {'city':city, 'state': state_name, 'zips':zips}
-		for key in filter(lambda a: not a == ZIPS, city_papers.keys()):
-			url = city_papers[key][0]
-			try:
-				source = newspaper.build(url)
-				sources.append(source)
-				papers.append({key:city_papers[key]})
-			except Exception as e:
-				print(str(e))
-		config = Config()
-		config.memorize_articles = True
-		config.fetch_images = False
-		news_pool = NewsPool(config)
-		news_pool.set(sources)
-		news_pool.join()
+## TODO do not fetch images
 
-		for i in range(len(papers)):
-			key,val = papers[i].popitem()
-			source = sources[i]
-			store_articles(key, source, location)
+def scrape_source(source):
+	try:
+		news_source = newspaper.build(source['url'])
+		store_articles(source,news_source)
+	except Exception as e:
+		print(str(e))
 
-def store_articles(paper_name,source,location):
+def store_articles(source, news_source):
 	client = MongoClient('mongodb://naberfeed.com:27017')
 	db = client.naberfeed
-	for i in range(0,source.size()):
+	for i in range(0,news_source.size()):
 		docs = []
 		placeholder = copy.deepcopy(article_template)
-		article = source.articles[0]
+		article = news_source.articles[0]
 		article.download()
 		article.parse()
 		article.nlp()
@@ -58,21 +39,21 @@ def store_articles(paper_name,source,location):
 			placeholder['authors'] = article.authors
 			placeholder['summary'] = article.summary
 			placeholder['title'] = article.title
-			placeholder['publisherUrl'] = article.source_url
+			placeholder['publisherUrl'] = source['url']
 			placeholder['sourceUrl'] = article.url
-			placeholder['city'] = location['city']
-			placeholder['state'] = location['state']
-			placeholder['zips'] = location['zips']
-			placeholder['publisher'] = source.brand
+			placeholder['city'] = source['city']
+			placeholder['state'] = source['state']
+			placeholder['zips'] = source['zip']
+			placeholder['publisher'] = source['publisherName']
 			docs.append(placeholder)
 		if len(docs) > 0:
 			db.articles.insert_many(docs)
 
 if __name__ == '__main__':
-	with open('output.json') as file:
-		data = json.load(file)
-	# Parallel(n_jobs=4)(delayed(scrape_state)(key,val) for (key,val) in data.items())
-	for key,val in data.items():
-		scrape_state(key,val)
-		break
+	client = MongoClient('mongodb://naberfeed.com:27017')
+	db = client.naberfeed
+	sources = list(db.sources.find({'flagged':0}))
+	# for source in sources:
+	# 	scrape_source(source)
+	Parallel(n_jobs=4)(delayed(scrape_source)(source) for source in sources)
 	print('Done scraping')
