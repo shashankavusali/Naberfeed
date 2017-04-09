@@ -12,4 +12,5 @@
   "city":"",
   "state":"",
   "zips":"",
+  "cluster_id":-1
 }
