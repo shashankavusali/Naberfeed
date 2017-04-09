@@ -48,6 +48,7 @@ def store_articles(paper_name,source,location):
 		docs = []
 		placeholder = copy.deepcopy(article_template)
 		article = source.articles[0]
+		article.download()
 		article.parse()
 		article.nlp()
 		if article.text != '':
@@ -57,10 +58,12 @@ def store_articles(paper_name,source,location):
 			placeholder['authors'] = article.authors
 			placeholder['summary'] = article.summary
 			placeholder['title'] = article.title
-			placeholder['sourceUrl'] = article.source_url
+			placeholder['publisherUrl'] = article.source_url
+			placeholder['sourceUrl'] = article.url
 			placeholder['city'] = location['city']
 			placeholder['state'] = location['state']
 			placeholder['zips'] = location['zips']
+			placeholder['publisher'] = source.brand
 			docs.append(placeholder)
 		if len(docs) > 0:
 			db.articles.insert_many(docs)
@@ -68,8 +71,8 @@ def store_articles(paper_name,source,location):
 if __name__ == '__main__':
 	with open('output.json') as file:
 		data = json.load(file)
-	Parallel(n_jobs=4)(delayed(scrape_state)(key,val) for (key,val) in data.items())
-	# for key,val in data.items():
-	# 	scrape_state(key,val)
-	# 	break
+	# Parallel(n_jobs=4)(delayed(scrape_state)(key,val) for (key,val) in data.items())
+	for key,val in data.items():
+		scrape_state(key,val)
+		break
 	print('Done scraping')
