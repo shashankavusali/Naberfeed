@@ -1,6 +1,5 @@
 import numpy as np
 import operator
-from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import linkage, cut_tree
 from scipy.spatial import distance
 from collections import Counter
@@ -14,7 +13,6 @@ def get_optimal_clustering(Z):
     X = range(20,40)
     c = cut_tree(Z, height = X)
     Y = np.apply_along_axis(unique_ele_count, axis = 0,arr=c )
-    #plt.plot(X,Y)
     optimal_cluster_count = Counter(Y).most_common(1)[0][0]
     idx =  max(np.where(Y==optimal_cluster_count)[0])
     return c[:,idx]
@@ -67,26 +65,3 @@ if __name__== '__main__':
         topic_words,cluster_word_counts = extract_topic_keywords(whole_keywords)
         topic ={'topic_words':topic_words,'doc_ids':articles,'doc_count':len(articles), 'cluster_id':i,'cluster_word_counts':cluster_word_counts}
         db.topics.insert_one(topic)
-
-    # # sorted_clusters = sorted(cluster_article_count, reverse = True, key = lambda x: x[1])
-    #
-    # ### Find the article names in each cluster
-    # large_clusters = sorted_clusters[0:5]
-    #
-    # clusterkeywords = [None]*5
-    # for i in range(5):
-    #     t = large_clusters[i]
-    #     cluster_id = t[0]
-    #     article_indices = np.where(c==cluster_id)[0]
-    #     akeywords = article_keywords[article_indices]
-    #     # objids = article_object_ids[article_indices]
-    #     # cursor = db.articles.find({'_id':{'$in':objids}})
-    #     # for doc in cursor:
-    #     #     print(doc)
-    #     clusterkeywords[i] = akeywords
-    #
-    # #Extract topics from clustered articles
-    # trending_topic_count = 5
-    # topics = [None] * trending_topic_count
-    # for i in range(len(clusterkeywords)):
-    #     extract_topic_keywords(clusterkeywords[i])
