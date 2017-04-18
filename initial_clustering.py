@@ -6,16 +6,17 @@ from topic_extractor import TopicExtractor
 from clustering import Clustering
 from scipy.spatial import distance
 from article_distance import ArticleDistance
+import copy
 
 if __name__ == '__main__':
     client = MongoClient('mongodb://naberfeed.com:27017')
     db = client.naberfeed
 
-    articles = list(db.articles.find({},{'_id':1,'keywords':1}).limit(1000))
+    articles = list(db.articles.find({},{'_id':1,'keywords':1}).limit(10000))
     article_keywords = np.array([article['keywords'] for article in articles])
     article_object_ids = np.array([article['_id'] for article in articles])
 
-    a_dist = ArticleDistance(article_keywords)
+    a_dist = ArticleDistance(copy.deepcopy(article_keywords))
     dists = a_dist.article_pdist()
     n = dists.shape[0]
     dists[range(n), range(n)] = 0

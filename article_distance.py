@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from scipy.spatial.distance import pdist
 import numpy as np
 import time
+from nltk.stem import SnowballStemmer
 
 class ArticleDistance(object):
     """docstring for Distance."""
@@ -25,12 +26,13 @@ class ArticleDistance(object):
         return dists
 
     def article_pdist(self):
-        keyword_list = [keyword for article in self.article_keywords for keyword in article]
+        stemmer  = SnowballStemmer("english")
+        keyword_list = [stemmer.stem(keyword) for article in self.article_keywords for keyword in article]
         keywords = list(set(keyword_list))
         article_features = []
         for article in self.article_keywords:
             feature_vector = []
-            feature_vector.extend([keyword_list.index(keyword) for keyword in article])
+            feature_vector.extend([keyword_list.index(stemmer.stem(keyword)) for keyword in article])
             article_features.append(feature_vector)
         start_time = time.time()
         dists = self.pairwise_distance(article_features)
